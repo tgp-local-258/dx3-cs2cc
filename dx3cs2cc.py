@@ -2,9 +2,11 @@ import requests
 import pyperclip
 import json
 import sys
+import os
 from bs4 import BeautifulSoup
 from tkinter import *
 from tkinter import ttk
+from tkinter import messagebox
 
 def cs2cc(vgm_url):
     html_text = requests.get(vgm_url).text
@@ -135,9 +137,19 @@ def cs2cc(vgm_url):
     }
 
     pyperclip.copy(str(json.dumps(chara_data)))
+    messagebox.showinfo('確認', 'クリップボードにコピーしました')
+
+def temp_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
 
 root = Tk()
 root.title('キャラクター保管所 ココフォリアキャラコマ出力')
+iconfile = temp_path('dx3.ico')
+root.iconbitmap(default=iconfile)
 root.resizable(False, False)
 frame1 = ttk.Frame(root, padding=(32))
 frame1.grid()
@@ -147,19 +159,20 @@ label1.grid(row=0, column=0, sticky=E)
 
 
 # Username Entry
-username = StringVar()
-username_entry = ttk.Entry(
+csurl = StringVar()
+csurl_entry = ttk.Entry(
     frame1,
-    textvariable=username,
+    textvariable=csurl,
     width=60)
-username_entry.grid(row=0, column=1)
+csurl_entry.grid(row=0, column=1)
 
 frame2 = ttk.Frame(frame1, padding=(0, 5))
 frame2.grid(row=2, column=1, sticky=W)
 
 button1 = ttk.Button(
     frame2, text='OK',
-    command=lambda: cs2cc(username.get()))
+    command=lambda: cs2cc(csurl.get())
+    )
 button1.pack(side=LEFT)
 
 button2 = ttk.Button(
